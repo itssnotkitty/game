@@ -93,5 +93,10 @@ const destroy = async (event)=> {
     $("#target-"+event.data.id).remove();
     delete targets.target[event.data.id-1];
     delete targets["target-"+event.data.id];
-    totalScore+=1;
+    
+    // Pontszám növelése
+    totalScore += 1;
+    
+    // Frissítjük a kijelzőt az HTML-ben
+    $("#score-display").text("Pontszám: " + totalScore);
 }
