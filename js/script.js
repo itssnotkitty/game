@@ -3,91 +3,84 @@ $(document).ready(()=>{
     $("#canvas").click(startGame);
 });
 
-var ballons = {ballon: []};
+var targets = {target: []};
 var totalScore = 0;
-var totalBallons = 0;
-var ballonColor = ["ballon-red", "ballon-yellow", "ballon-green"];
-var setIntervalMoveBallons;
-var setIntervalCheckBallons;
+var totalTargets = 0;
+var targetColor = ["target-red", "target-yellow", "target-green"];
+var setIntervalMoveTargets;
+var setIntervalCheckTargets;
 var gamePlay = false;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
-}  
+}   
 
 const startGame =()=>{
     $("#canvas").html("");
-    $("#canvas").css("cursor","url('./img/shoot.png'), auto");
+    $("#canvas").css("cursor","crosshair");
     $("#canvas").unbind("click");
     gamePlay = true;
-    showStarterBallon();
-    setIntervalMoveBallons = setInterval(moveBallons, 50);
+    showStarterTarget();
+    setIntervalMoveTargets = setInterval(moveTargets, 50);
 }
 
-const showStarterBallon =async()=>{
+const showStarterTarget = async()=>{
     for(let i = 0; i<5 && gamePlay; i++){
-        totalBallons+=1;
+        totalTargets+=1;
         let randomColor = parseInt(Math.random()*3);
         let cursorWidth = $("#canvas").width();
         let left = parseInt(Math.random()*((cursorWidth-60)))+"px";
-        $("#canvas").append("<div id='ballon-"+totalBallons+
-                            "' class='ballon "+ballonColor[randomColor]+
-                            "' style='bottom: 0px;"+"; left: "+left+
-                            "'><div class='dhaga'></div></div>");
-        $("#ballon-"+totalBallons).bind("click", {id: totalBallons}, destroy);
-        ballons["ballon-"+totalBallons]={speed: parseInt(Math.random()*10+1), bottom: 10};
-        ballons.ballon.push(totalBallons);
+        $("#canvas").append("<div id='target-"+totalTargets+
+                            "' class='ballon "+targetColor[randomColor]+
+                            "' style='bottom: 0px; left: "+left+
+                            "'></div>");
+        $("#target-"+totalTargets).bind("click", {id: totalTargets}, destroy);
+        targets["target-"+totalTargets]={speed: parseInt(Math.random()*10+1), bottom: 10};
+        targets.target.push(totalTargets);
         await sleep(1000);
     }
-    checkBallons()
+    checkTargets()
     if(gamePlay)
-        setIntervalCheckBallons = setInterval(checkBallons, 2000);
+        setIntervalCheckTargets = setInterval(checkTargets, 2000);
 }
 
-const checkBallons =async ()=>{
+const checkTargets = async ()=>{
     for(let i=0; i<5 && gamePlay;i++){
-        if(ballons.ballon[i]==undefined){
-            totalBallons+=1;
+        if(targets.target[i]==undefined){
+            totalTargets+=1;
             let randomColor = parseInt(Math.random()*3);
             let cursorWidth = $("#canvas").width();
             let left = parseInt(Math.random()*((cursorWidth-60)))+"px";
-            $("#canvas").append("<div id='ballon-"+(i+1)+
-                                "' class='ballon "+ballonColor[randomColor]+
-                                "' style='bottom: 0px;"+"; left: "+left+
-                                "'><div class='dhaga'></div></div>");
-            $("#ballon-"+(i+1)).bind("click", {id: i+1}, destroy);
-            ballons["ballon-"+(i+1)]={speed: parseInt(Math.random()*10+1), bottom: 10};
-            ballons.ballon[i] = i+1;
+            $("#canvas").append("<div id='target-"+(i+1)+
+                                "' class='ballon "+targetColor[randomColor]+
+                                "' style='bottom: 0px; left: "+left+
+                                "'></div>");
+            $("#target-"+(i+1)).bind("click", {id: i+1}, destroy);
+            targets["target-"+(i+1)]={speed: parseInt(Math.random()*10+1), bottom: 10};
+            targets.target[i] = i+1;
             await sleep(1000)
         }
     }
 }
 
-function moveBallons() {
+function moveTargets() {
     try {
-        ballons.ballon.forEach(s=>{
+        targets.target.forEach(s=>{
             if(gamePlay) {
-                let ballon;
-                if($("#ballon-"+s).css("bottom").length==3){
-                    bottom = parseInt($("#ballon-"+s).css("bottom").substr(-3,1));
-                } else if($("#ballon-"+s).css("bottom").length==4) {
-                    bottom = parseInt($("#ballon-"+s).css("bottom").substr(-4,2));
-                } else {
-                    bottom = parseInt($("#ballon-"+s).css("bottom").substr(-5,3));
-                }
-                bottom += ballons["ballon-"+s].speed;
-                $("#ballon-"+s).css("bottom", bottom+"px");
-                ballons["ballon-"+s].bottom = bottom;
+                let currentPos = $("#target-"+s).css("bottom");
+                let bottom = parseInt(currentPos);
+                bottom += targets["target-"+s].speed;
+                $("#target-"+s).css("bottom", bottom+"px");
+                targets["target-"+s].bottom = bottom;
                 if(bottom>400){
-                    window.clearInterval(setIntervalCheckBallons)
-                    window.clearInterval(setIntervalMoveBallons)
+                    window.clearInterval(setIntervalCheckTargets);
+                    window.clearInterval(setIntervalMoveTargets);
                     gamePlay = false;
-                    alert("Your score: "+totalScore)
-                    ballons = {ballon: []};
+                    alert("Your score: "+totalScore);
+                    targets = {target: []};
                     totalScore = 0;
-                    totalBallons = 0;
-                    $("#canvas").html("")
-                    $("#canvas").css("cursor", "pointer");
+                    totalTargets = 0;
+                    $("#canvas").html("");
                     $("#canvas").append("<h2 class='text-center' style='margin: 200px'>Click for Restart Game</h2>");
                     $("#canvas").click(startGame);
                 }        
@@ -97,8 +90,8 @@ function moveBallons() {
 }
 
 const destroy = async (event)=> {
-    $("#ballon-"+event.data.id).remove();
-    delete ballons.ballon[event.data.id-1]
-    delete ballons["ballon-"+event.data.id];
+    $("#target-"+event.data.id).remove();
+    delete targets.target[event.data.id-1];
+    delete targets["target-"+event.data.id];
     totalScore+=1;
 }
