@@ -15,12 +15,14 @@ footer {
 
 .ballon {
     position: absolute;
-    width: 60px;
-    height: 60px; /* Négyzet alakú */
-    margin: 0%;
-    border: 2px solid #ffffff; /* Fehér keret */
-    border-radius: 0%;        /* Ez teszi kockává */
-    background-size: cover;
+    width: 60px;   /* A karaktered szélessége */
+    height: 100px; /* A karaktered magassága */
+    background-image: url('../img/enemy.jpg');
+    background-size: contain; /* Fontos: ez igazítja a képet a mérethez */
+    background-repeat: no-repeat;
+    background-position: center;
+    border: none;  /* A keretet kiszedjük, mert a kép a lényeg */
+    cursor: crosshair;
 }
 
 .ballon-red {
